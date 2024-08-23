@@ -1,7 +1,7 @@
 
 # .github/workflows/terraform-cicd.yml
 
-name: Terraform CI/CD
+name: Terraform CI/CD Plan
 
 on:
   workflow_dispatch:
@@ -37,6 +37,3 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve

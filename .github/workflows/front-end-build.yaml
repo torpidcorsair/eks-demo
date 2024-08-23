@@ -1,0 +1,66 @@
+name: Frontend CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+        
+    - name: SonarQube frontend scan
+      uses: sonarsource/sonarqube-scan-action@master
+      with:
+        args: >
+          -Dproject.settings=sonar-project.properties
+          -Dsonar.sources=frontend/.
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    
+    - name: Building the docker image
+      run: |
+        docker build -t frontend frontend/.
+        docker tag frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
+    
+    - name: Run Trivy vulnerability scanner for frontend
+      uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+      with:
+          image-ref: '${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+    - name: Login to AWS ECR
+      run: |
+        aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+    - name: Push frontend Docker image
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
+          
+    # - name: Deploy to AWS EKS
+    #   run: |
+    #     aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
+    #     if kubectl get deployment frontend-deployment -n default &> /dev/null; then
+    #       echo "Deployment exists, updating image..."
+    #       kubectl rollout restart deployment frontend-deployment -n default
+    #     else
+    #       echo "Deployment doesn't exist, creating..."
+    #       wget https://raw.githubusercontent.com/LionHuntDiG/3-tier-eks-manifests/main/frontend_deployment.yaml
+    #       kubectl apply -f frontend_deployment.yaml
+    #     fi
