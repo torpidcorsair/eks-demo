@@ -20,7 +20,7 @@ resource "aws_instance" "web" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.medium"
   subnet_id              = aws_subnet.subnet-public-1.id
-  user_data              = filebase64("user-data.sh")
+  user_data              = filebase64("userdata.sh")
   vpc_security_group_ids = [aws_security_group.sonarQube-SG.id]
 
   tags = {
