@@ -6,6 +6,195 @@ const axios = require('axios'); // Use Axios for making HTTP requests to backend
 app.use(express.json());
 app.use(express.static('public')); // Serve static files (e.g., your HTML, CSS, JavaScript)
 
+// Serve the main page
+app.get('/', (req, res) => {
+  const indexHtml = `
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background-color: #e9ecef;
+            padding-top: 50px;
+        }
+        .dark-mode {
+            background-color: #2c2c2c;
+            color: white;
+        }
+        .dark-mode .container, .dark-mode .entries-container, .dark-mode .form-container {
+            background-color: #3c3c3c;
+            border-color: #555;
+        }
+        .dark-mode .card-header, .dark-mode .separator {
+            background-color: #007bff;
+        }
+        .dark-mode .alert {
+            color: black;
+        }
+        .container {
+            max-width: 600px;
+        }
+        .card {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+        .entries-container {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .entries-container h5 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .entries-container table {
+            width: 100%;
+            font-size: 1.2em;
+        }
+        .entries-container th, .entries-container td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .entries-container tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .dark-mode .entries-container tr:nth-child(even) {
+            background-color: #4c4c4c;
+        }
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .separator {
+            border-top: 3px solid #007bff;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .title {
+            text-align: center;
+            color: #28a745; /* Bright green color */
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .form-container {
+            border: 2px solid #87CEEB; /* Sky blue color */
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .dark-mode .form-container {
+            background-color: #3c3c3c;
+            border-color: #555;
+        }
+        .form-container label {
+            font-weight: bold;
+        }
+        .dark-mode .form-container label {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Welcome to Hypha Webinar</h1>
+        <div class="text-right mb-3">
+            <label for="darkModeToggle">Dark Mode</label>
+            <input type="checkbox" id="darkModeToggle">
+        </div>
+        <div class="form-container">
+            <h2 class="text-center">User Information</h2>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="entries-container">
+        <h5>Last 10 Entries</h5>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody id="dataList">
+                <!-- You can use a template engine here or dynamically populate this with data -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#userForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/submit',
+                    type: 'POST',
+                    data: {
+                        username: $('#username').val(),
+                        email: $('#email').val()
+                    },
+                    success: function(response) {
+                        $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                          'Data has been saved successfully!' +
+                          '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                          '<span aria-hidden="true">&times;</span>' +
+                          '</button></div>').prependTo('.container').delay(3000).fadeOut();
+                        setTimeout(function(){ location.reload(); }, 3000);
+                    },
+                    error: function(response) {
+                        $('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                          'Failed to save data.' +
+                          '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                          '<span aria-hidden="true">&times;</span>' +
+                          '</button></div>').prependTo('.container').delay(3000).fadeOut();
+                    }
+                });
+            });
+
+            // Toggle dark mode
+            $('#darkModeToggle').on('change', function() {
+                $('body').toggleClass('dark-mode');
+            });
+        });
+    </script>
+</body>
+</html>
+  `;
+  res.send(indexHtml);
+});
+
+// Handle form submission
 app.post('/submit', async (req, res) => {
   try {
     const response = await axios.post('http://backend-service.default.svc.cluster.local/submit', req.body);
@@ -18,106 +207,4 @@ app.post('/submit', async (req, res) => {
 
 app.listen(3000, () => {
   console.log('Frontend server listening on port 3000');
-});
-
-app.get('/', (req, res) => {
-  const indexHtml = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <title>Container API Form</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f2f2f2;
-      }
-      #containerIP {
-        color: red; /* Make the IP address text red */
-        font-weight: bold;
-      }
-      .container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        color: #333;
-      }
-      form {
-        margin-top: 20px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-        color: #666;
-      }
-      input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-      }
-      button {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Welcome to Hypha DevOps Kubernetes wizards Cohorts</h1>
-      <h2>Enter your name here</h2>
-      <form id="userForm">
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName">
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName">
-        <button type="button" onclick="submitForm()">Submit</button>
-      </form>
-    </div>
-    <div id="message" style="text-align: center; color: green; font-weight: bold;"></div>
-    <script>
-      async function submitForm() {
-        const formData = new FormData(document.getElementById('userForm'));
-        const payload = Object.fromEntries(formData);
-
-        try {
-          const response = await fetch('/submit', {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: { 'Content-Type': 'application/json' }
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            document.getElementById('userForm').reset();
-            document.getElementById('message').innerHTML = 'Form submitted successfully!';
-          } else {
-            throw new Error(\`Request failed with status \${response.status}\`);
-          }
-        } catch (error) {
-          console.error(error);
-          document.getElementById('message').innerHTML = 'Error submitting form.';
-        }
-      }
-    </script>
-  </body>
-  </html>
-  `;
-  res.send(indexHtml);
 });
