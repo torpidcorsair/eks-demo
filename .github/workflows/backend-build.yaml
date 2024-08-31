@@ -22,8 +22,8 @@ jobs:
       uses: sonarsource/sonarqube-scan-action@master
       with:
         args: >
-          -Dproject.settings=sonar-project.properties
-          -Dsonar.sources=backend/.
+          -Dproject.settings=./backend/sonar-project.properties
+          -Dsonar.sources=./backend/.
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

@@ -23,7 +23,7 @@ jobs:
       with:
         args: >
           -Dproject.settings=./frontend/sonar-project.properties
-          -Dsonar.sources=./frontend
+          -Dsonar.sources=./frontend/.
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
