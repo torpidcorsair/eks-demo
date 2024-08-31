@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "frontend-deploy.fullname" . }}
+  namespace: frontend
   labels:
     {{- include "frontend-deploy.labels" . | nindent 4 }}
 spec:

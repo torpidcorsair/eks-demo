@@ -1,0 +1,39 @@
+name: database-TBD
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  Add-ons:
+    name: Add-ons-installation
+    runs-on: ubuntu-latest
+    environment: production  # Or the environment you want to deploy to (e.g., staging)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Configure kubectl
+        run: |
+          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
+
+      - name: Install MySQL
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm upgrade --install mysql --namespace default bitnami/mysql \
+            --set auth.rootPassword=ShanmuKHA@3456 \
+            --set auth.database=mydatabase \
+            --set primary.persistence.size=8Gi \
+            --set primary.persistence.storageClass=gp2

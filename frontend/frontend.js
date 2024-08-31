@@ -197,7 +197,7 @@ app.get('/', (req, res) => {
 // Handle form submission
 app.post('/submit', async (req, res) => {
   try {
-    const response = await axios.post('http://backend-service.default.svc.cluster.local/submit', req.body);
+    const response = await axios.post('http://backend-service.backend.svc.cluster.local/submit', req.body);
     res.send(response.data); // Forward the response from the backend to the client
   } catch (error) {
     console.error('Error:', error);
