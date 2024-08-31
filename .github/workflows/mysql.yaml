@@ -24,3 +24,4 @@ jobs:
           kubectl apply -f ./mysql/mysql.yaml   
           kubectl apply -f ./mysql/secret.yaml
           kubectl apply -f ./mysql/service.yaml
+          kubectl apply -f ./mysql/secret-2.yaml
