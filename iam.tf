@@ -89,7 +89,8 @@ resource "aws_iam_policy" "create_delete_ebs_policy" {
                 "ec2:DescribeVolumes",
                 "ec2:DescribeVolumesModifications",
                 "ec2:ModifyVolume",
-                "ec2:CreateTags"
+                "ec2:CreateTags",
+                "sts:GetCallerIdentity"
             ],
             "Resource": "*"
         }
