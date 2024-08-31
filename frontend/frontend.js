@@ -1,4 +1,3 @@
-// frontend.js
 const express = require('express');
 const app = express();
 const axios = require('axios'); // Use Axios for making HTTP requests to backend
@@ -123,12 +122,12 @@ app.get('/', (req, res) => {
             <h2 class="text-center">User Information</h2>
             <form id="userForm">
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">First Name</label>
                     <input type="text" class="form-control" id="username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <label for="email">Last Name</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Submit</button>
             </form>
@@ -143,8 +142,8 @@ app.get('/', (req, res) => {
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Email</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
                 </tr>
             </thead>
             <tbody id="dataList">
@@ -160,10 +159,11 @@ app.get('/', (req, res) => {
                 $.ajax({
                     url: '/submit',
                     type: 'POST',
-                    data: {
-                        username: $('#username').val(),
-                        email: $('#email').val()
-                    },
+                    contentType: 'application/json', // Set the content type to JSON
+                    data: JSON.stringify({
+                        firstName: $('#username').val(),
+                        lastName: $('#email').val()
+                    }),
                     success: function(response) {
                         $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
                           'Data has been saved successfully!' +
@@ -200,7 +200,7 @@ app.post('/submit', async (req, res) => {
     const response = await axios.post('http://backend-service.backend.svc.cluster.local/submit', req.body);
     res.send(response.data); // Forward the response from the backend to the client
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error:', error.message);
     res.status(500).send({ message: 'Error invoking Backend API' });
   }
 });
