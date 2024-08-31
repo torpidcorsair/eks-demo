@@ -51,15 +51,3 @@ jobs:
 
     - name: Push backend Docker image
       run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest
-
-    # - name: Deploy to AWS EKS
-    #   run: |
-    #     aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
-    #     if kubectl get deployment backend-deployment -n default &> /dev/null; then
-    #       echo "Deployment exists, updating image..."
-    #       kubectl rollout restart deployment backend-deployment -n default
-    #     else
-    #       echo "Deployment doesn't exist, creating..."
-    #       wget https://raw.githubusercontent.com/fredritchie/3-tier-eks-manifests/main/backend.yaml
-    #       kubectl apply -f backend.yaml
-    #     fi
