@@ -70,8 +70,19 @@ app.post('/submit', async (req, res) => {
 
     res.json({ message: 'Data saved to database successfully' });
   } catch (err) {
-    console.error('Error inserting data into MySQL:', err.code, err.message); // Log the error code and message
+    console.error('Error inserting data into MySQL:', err.code, err.message);
     res.status(500).json({ message: 'Error saving data to database', details: err.message }); 
+  }
+});
+
+// API endpoint to get the last 10 entries
+app.get('/entries', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM \`${dbConfig.table}\` ORDER BY id DESC LIMIT 10;`);
+    res.json(rows); // Send the last 10 entries as a response
+  } catch (err) {
+    console.error('Error fetching entries from MySQL:', err.code, err.message);
+    res.status(500).json({ message: 'Error fetching entries from database', details: err.message }); 
   }
 });
 
