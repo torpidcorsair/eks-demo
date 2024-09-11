@@ -20,6 +20,7 @@ jobs:
       - name: Deploy to AWS EKS
         run: |
           aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
+          kubectl create ns backend
           kubectl apply -f ./mysql/ns.yaml
           kubectl apply -f ./mysql/mysql.yaml   
           kubectl apply -f ./mysql/secret.yaml

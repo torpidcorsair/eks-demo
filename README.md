@@ -34,4 +34,20 @@ terraform apply
 - ``` aws eks --region ap-south-1 update-kubeconfig --name webapp ```
 - ```kubectl get nodes ```
 
+Make sure bucket exists
+Terraform init
+
+Run terraform plan
+run terraform apply job
+
+aws eks --region ap-south-1 update-kubeconfig --name webapp
+
+k get no 
+
+grab the Sonar host Url and go to accounts > secuirty and Generate token
+
+Run Adds-ons
+
+Run 
+
 

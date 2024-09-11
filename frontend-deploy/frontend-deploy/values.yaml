@@ -47,7 +47,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: a91a06d7304a943188f476aa149b72fa-369991315.ap-south-1.elb.amazonaws.com
+    - host: a5179f0860c374bcfb5cf0ffb12ac444-2549843.ap-south-1.elb.amazonaws.com
       paths:
         - path: /
           pathType: ImplementationSpecific
