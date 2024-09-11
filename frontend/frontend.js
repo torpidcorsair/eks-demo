@@ -119,7 +119,7 @@ app.get('/', async (req, res) => {
     </head>
     <body>
         <div class="container">
-            <h1 class="title">Welcome to Hypha Webinar</h1>
+            <h1 class="title">Welcome to EKS TechTalk...!!</h1>
             <div class="text-right mb-3">
                 <label for="darkModeToggle">Dark Mode</label>
                 <input type="checkbox" id="darkModeToggle">
