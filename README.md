@@ -34,11 +34,14 @@ terraform apply
 - ``` aws eks --region ap-south-1 update-kubeconfig --name webapp ```
 - ```kubectl get nodes ```
 
+```
 Make sure bucket exists
 Terraform init
 
 Run terraform plan
 run terraform apply job
+
+update the instance type metadata settings
 
 aws eks --region ap-south-1 update-kubeconfig --name webapp
 
@@ -46,8 +49,18 @@ k get no
 
 grab the Sonar host Url and go to accounts > secuirty and Generate token
 
-Run Adds-ons
+Run Adds-ons job
 
-Run 
+do mysql deployment
+
+do backend build job
+
+do frontend build job
+
+do backenend deploy
+
+do frontned deploy make sure to update the ingress loadbalancer DNS name into ingress hostname
+
+```
 
 
